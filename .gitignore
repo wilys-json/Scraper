@@ -9,3 +9,6 @@ __pycache__
 
 #photo directory
 PhotosOfMe
+
+# JSON file
+*.json
