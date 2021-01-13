@@ -150,7 +150,7 @@ class Scraper(Chrome, Config):
 
     def login(self):
         """
-        Generic login function. Deploys 'loginSteps' in input API.
+        Generic login function. Implements 'loginSteps' in input API.
         """
         assert self.loginSteps, error.MISSING("login config")
 
@@ -162,7 +162,7 @@ class Scraper(Chrome, Config):
 
     def scrape(self):
         """
-        Generic scrape function. Deploys 'scrapeSteps' in input API.
+        Generic scrape function. Implements 'scrapeSteps' in input API.
         """
         assert self.scrapeSteps, error.MISSING("scrape config")
 
