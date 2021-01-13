@@ -1,0 +1,63 @@
+{
+  "config" : {
+    "BaseUrl" : "https://www.facebook.com",
+    "TargetUrl" : "https://www.facebook.com/wilson.lam.161/photos",
+    "Wait" : 0.5,
+    "usernameElement" : {
+      "type" : "id",
+      "keyword" : "email",
+      "content" : "wlamcuhk@gmail.com",
+      "encoded" : false,
+      "action" : "_fillContent"
+    },
+    "passwordElement" : {
+      "type" : "id",
+      "keyword" : "pass",
+      "content" : "=MTMzYjMzwWQ",
+      "encoded" : true,
+      "reverse" : true,
+      "action" : "_fillContent"
+    },
+    "loginSubmitButton" : {
+      "type" : "id",
+      "keyword" : [
+        "loginbutton",
+        "u_0_b"
+      ],
+      "action" : "_tryClicks"
+    },
+    "approvalCode" : {
+      "type" : "id",
+      "keyword" : "approvals_code",
+      "encoded" : false,
+      "action" : "_fillContent"
+    },
+    "checkpointSubmitButton" : {
+      "type" : "id",
+      "keyword" : "checkpointSubmitButton",
+      "action" : "_click"
+    },
+    "saveBrowser" : {
+      "type" : "xpath",
+      "keyword" : "//span[.='Save Browser']",
+      "action" : "_click"
+    },
+    "loginSteps" : [
+        "usernameElement",
+        "passwordElement",
+        "loginSubmitButton",
+        "approvalCode",
+        "checkpointSubmitButton",
+        "saveBrowser",
+        "checkpointSubmitButton"
+      ]
+  },
+  "steps" : [
+    "gotoBaseUrl",
+    "login",
+    "gotoTargetUrl"
+  ],
+  "downloads" : {
+    "download.default_directory": null
+  }
+}
