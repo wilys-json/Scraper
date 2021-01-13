@@ -1,9 +1,9 @@
 from getpass import getpass
 from selenium.webdriver import Chrome
 from webdriver_manager.chrome import ChromeDriverManager
-from Config import Config
-from error import error
-from utils import _decode
+from Scraper.config import Config
+from Scraper.error import error
+from Scraper.utils import _decode
 from time import sleep
 
 class Scraper(Chrome, Config):
@@ -22,6 +22,18 @@ class Scraper(Chrome, Config):
         assert element in self.__dict__, error.INVALID(element)
 
         return self.__dict__[element]
+
+
+    def _findObjects(self, element):
+        """
+        Generic function to find element in webpage.
+        """
+        obj = self._getObject(element)
+        type, keyword = obj['type'], obj['keyword']
+        inventory, attribute = obj['inventory'], obj['attribute']
+        elements = self.find_elements(type, keyword)
+        self.__dict__[inventory] = [element.get_attribute(attribute)
+                                    for element in elements]
 
 
     def _click(self, element):
@@ -82,6 +94,40 @@ class Scraper(Chrome, Config):
                 sleep(self.Wait)
 
 
+    def _scroll(self, element):
+        obj = self._getObject(element)
+        recursive = obj['recursive']
+
+        if recursive:
+            currentHeight = self.execute_script(
+                             "return document.body.scrollHeight"
+                             )
+            while True:
+                self.execute_script(
+                    "window.scrollTo(0, document.body.scrollHeight);"
+                    )
+
+                time.sleep(self.Wait)
+
+                newHeight = driver.execute_script(
+                            "return document.body.scrollHeight"
+                            )
+                if newHeight == currentHeight:
+                    break
+                currentHeight = newHeight
+        else:
+            self.execute_script(
+                "window.scrollTo(0, document.body.scrollHeight);"
+                )
+
+
+    def scrapeObjects(self, element):
+        obj = self._getObject(element)
+        inventory = self.__dict__[obj['inventory']]
+        action = obj['scrapeAction']
+        for item in inventory:
+            self.get(item)
+
     def gotoBaseUrl(self):
         """
         Go to Base page.
@@ -90,6 +136,7 @@ class Scraper(Chrome, Config):
             self.get(self.BaseUrl)
         except:
             self.BaseUrl = input("Please enter base url:")
+
 
     def gotoTargetUrl(self):
         """
@@ -100,13 +147,26 @@ class Scraper(Chrome, Config):
         except:
             self.TargetUrl = input("Please enter target url:")
 
+
     def login(self):
         """
-        Generic login function.
+        Generic login function. Deploys 'loginSteps' in input API.
         """
         assert self.loginSteps, error.MISSING("login config")
 
         for stepElement in self.loginSteps:
+            obj = self._getObject(stepElement)
+            Scraper.__dict__[obj['action']](self, stepElement)
+            sleep(self.Wait)
+
+
+    def scrape(self):
+        """
+        Generic scrape function. Deploys 'scrapeSteps' in input API.
+        """
+        assert self.scrapeSteps, error.MISSING("scrape config")
+
+        for stepElement in self.scrapeSteps:
             obj = self._getObject(stepElement)
             Scraper.__dict__[obj['action']](self, stepElement)
             sleep(self.Wait)

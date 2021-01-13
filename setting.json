@@ -50,12 +50,13 @@
         "checkpointSubmitButton",
         "saveBrowser",
         "checkpointSubmitButton"
-      ]
+    ],
   },
   "steps" : [
     "gotoBaseUrl",
     "login",
-    "gotoTargetUrl"
+    "gotoTargetUrl",
+    "scrape"
   ],
   "downloads" : {
     "download.default_directory": null

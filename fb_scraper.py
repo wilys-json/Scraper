@@ -1,9 +1,10 @@
 import argparse
 import json
-from Scraper import Scraper
-from error import error
+import os
+from Scraper.scraper import Scraper
+from Scraper.error import error
 from time import sleep
-from utils import _encode
+from Scraper.utils import _encode
 
 def main():
     parser = argparse.ArgumentParser()
@@ -19,7 +20,7 @@ def main():
         print(_encode(plain_text=args.encode, reverse=args.reverse))
 
     else:
-        assert args.input, error.NOFILE("input")
+        assert os.path.exists(args.input), error.NOFILE("input", args.input)
 
         params = json.load(open(args.input))
         driver = Scraper(params['config'])

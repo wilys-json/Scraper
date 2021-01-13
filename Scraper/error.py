@@ -8,5 +8,5 @@ class error:
         return "Missing {} info.".format(missing_info)
 
     @classmethod
-    def NOFILE(cls, file):
-        return "Missing {} file.".format(file)
+    def NOFILE(cls, file, filename):
+        return "Cannot find {} file: {}".format(file, filename)
