@@ -1,0 +1,11 @@
+#cache
+__pycache__
+
+#log file
+*.log
+
+#zip files
+*.zip
+
+#photo directory
+PhotosOfMe
