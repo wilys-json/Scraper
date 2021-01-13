@@ -1,3 +1,6 @@
+import os
+import shutil
+import requests
 from getpass import getpass
 from selenium.webdriver import Chrome
 from webdriver_manager.chrome import ChromeDriverManager
@@ -5,17 +8,26 @@ from Scraper.config import Config
 from Scraper.error import error
 from Scraper.utils import _decode
 from time import sleep
+from datetime import datetime
+
+DOWNLOAD_CONFIG = {
+    "downloadCounts",
+    "downloadBuffer",
+    "downloadDirectory",
+    "downloadFileFormat"
+}
 
 class Scraper(Chrome, Config):
     """
     Generic class for scraping.
     """
     def __init__(self, params):
-        Chrome.__init__(self, ChromeDriverManager().install())
+        Chrome.__init__(self,
+                        ChromeDriverManager().install())
         Config.__init__(self, **params)
+        self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-
-    def _getObject(self, element):
+    def _getObject(self, element, *args, **kwargs):
         """
         Get object from JSON.
         """
@@ -24,28 +36,47 @@ class Scraper(Chrome, Config):
         return self.__dict__[element]
 
 
-    def _findObjects(self, element):
+    def _findObjects(self, element, *args, **kwargs):
         """
         Generic function to find element in webpage.
         """
         obj = self._getObject(element)
         type, keyword = obj['type'], obj['keyword']
         inventory, attribute = obj['inventory'], obj['attribute']
+        sleep(self.Wait)
         elements = self.find_elements(type, keyword)
-        self.__dict__[inventory] = [element.get_attribute(attribute)
-                                    for element in elements]
+        if attribute:
+            self.__dict__[inventory] = [element.get_attribute(attribute)
+                                        for element in elements]
+        else:
+            self.__dict__[inventory] = elements
 
 
-    def _click(self, element):
+    def _findObject(self, element, *args, **kwargs):
+        obj = self._getObject(element)
+        type, keyword = obj['type'], obj['keyword']
+        inventory, attribute = obj['inventory'], obj['attribute']
+        sleep(self.Wait)
+        element = self.find_element(type, keyword)
+        if attribute:
+            self.__dict__[inventory] = element.get_attribute(attribute)
+        else:
+            self.__dict__[inventory] = element
+
+
+    def _click(self, element, *args, **kwargs):
         """
         Generic click function
         """
         obj = self._getObject(element)
         type, keyword = obj['type'], obj['keyword']
-        self.find_element(type, keyword).click()
+        try:
+            self.find_element(type, keyword).click()
+        except:
+            pass
 
 
-    def _fillContent(self, element):
+    def _fillContent(self, element, *args, **kwargs):
         """
         Generic function to fill in content
         """
@@ -72,7 +103,7 @@ class Scraper(Chrome, Config):
             pass
 
 
-    def _tryClicks(self, element):
+    def _tryClicks(self, element, *args, **kwargs):
         """
         Try out elements to click until success or end of tryout list.
         """
@@ -94,10 +125,9 @@ class Scraper(Chrome, Config):
                 sleep(self.Wait)
 
 
-    def _scroll(self, element):
+    def _scroll(self, element, *args, **kwargs):
         obj = self._getObject(element)
         recursive = obj['recursive']
-
         if recursive:
             currentHeight = self.execute_script(
                              "return document.body.scrollHeight"
@@ -107,9 +137,9 @@ class Scraper(Chrome, Config):
                     "window.scrollTo(0, document.body.scrollHeight);"
                     )
 
-                time.sleep(self.Wait)
+                sleep(self.LongWait)
 
-                newHeight = driver.execute_script(
+                newHeight = self.execute_script(
                             "return document.body.scrollHeight"
                             )
                 if newHeight == currentHeight:
@@ -121,12 +151,34 @@ class Scraper(Chrome, Config):
                 )
 
 
-    def scrapeObjects(self, element):
+    def _downloadObject(self, *args, **kwargs):
+        assert DOWNLOAD_CONFIG.intersection(self.__dict__),\
+        error.MISSING("download config")
+
+        if not os.path.exists(self.downloadDirectory):
+            os.mkdir(self.downloadDirectory)
+        directory = "{}".format(self.downloadDirectory)
+        filename = "{}_{:04d}{}".format(self.timestamp,
+                                        self.downloadCounts,
+                                        self.downloadFileFormat)
+        with open(os.path.join(directory, filename), "wb") as outputFile:
+            response = requests.get(self.__dict__[self.downloadBuffer]
+                                    ,stream=True)
+            shutil.copyfileobj(response.raw, outputFile)
+
+        self.downloadCounts += 1
+
+
+    def _scrapeFromUrl(self, element, *args, **kwargs):
         obj = self._getObject(element)
-        inventory = self.__dict__[obj['inventory']]
-        action = obj['scrapeAction']
-        for item in inventory:
-            self.get(item)
+        URLs = self.__dict__[obj['inventory']]
+        actions = obj['scrapeActions']
+        for URL in URLs:
+            self.get(URL)
+            for action in actions:
+                actionObj = self._getObject(action)
+                Scraper.__dict__[actionObj['action']](self, action)
+
 
     def gotoBaseUrl(self):
         """
@@ -165,7 +217,6 @@ class Scraper(Chrome, Config):
         Generic scrape function. Implements 'scrapeSteps' in input API.
         """
         assert self.scrapeSteps, error.MISSING("scrape config")
-
         for stepElement in self.scrapeSteps:
             obj = self._getObject(stepElement)
             Scraper.__dict__[obj['action']](self, stepElement)
