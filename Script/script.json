@@ -1,7 +1,7 @@
 {
     "config": {
         "BaseUrl": "https://www.facebook.com",
-        "TargetUrl": "https://www.facebook.com/$ALIAS/photos",
+        "TargetUrl": "https://www.facebook.com/wilson.lam.161/photos",
         "Wait": 1,
         "LongWait": 2,
         "downloadDirectory": "PhotosOfMe",
@@ -11,14 +11,14 @@
         "usernameElement": {
             "type": "id",
             "keyword": "email",
-            "content": "$EMAIL",
+            "content": "wlamcuhk@gmail.com",
             "encoded": false,
             "action": "_fillContent"
         },
         "passwordElement": {
             "type": "id",
             "keyword": "pass",
-            "content": "$PASSWORD",
+            "content": "=MTMzYjMzwWQ",
             "encoded": true,
             "reverse": true,
             "action": "_fillContent"
@@ -48,7 +48,7 @@
             "action": "_click"
         },
         "recursiveScroll": {
-            "action": "_scroll",
+            "action": "_scrollDown",
             "recursive": true
         },
         "getPhotoUrls": {

@@ -21,14 +21,49 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.      #
 ###################################################################################
 
-class Config:
+import sys
+sys.path.append('../')
+
+import os
+import argparse
+import json
+from Scraper.scraper import Scraper
+from Scraper.error import error
+from time import sleep
+from Scraper.utils import _encode
+
+def main():
     """
-    Config class. Stores attributes defined in JSON script.
-    Parent class of Scraper.
+    Main program of Scraper.
+    `--input` option calls the scraping program.
+    `--encode` option calls the encode password program.
     """
-    def __init__(self, **kwargs):
-        if kwargs:
-            # Iterate over keyword arguments
-            for attrb, val in kwargs.items():
-                # Store attributes
-                self.__dict__[attrb] = val
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--input', type=str, metavar='I', required=False,
+                        help='Input API.')
+    parser.add_argument('--encode', type=str, metavar='ENC',required=False,
+                        help='Encode string using Base64.')
+    parser.add_argument('-r', '--reverse', action='store_true', required=False,
+                        help='If flagged, encoded string will be reversed.')
+    args = parser.parse_args()
+
+    # Encode password
+    if args.encode:
+        print(_encode(plain_text=args.encode, reverse=args.reverse))
+
+    # Call scraping script
+    else:
+        assert os.path.exists(args.input), error.NOFILE("input", args.input)
+
+        # Load JSON file
+        params = json.load(open(args.input))
+        # Configure Scraper object
+        driver = Scraper(params['config'])
+
+        # Imeplement steps in scraping script
+        for step in params['steps']:
+            assert step in Scraper.__dict__, error.INVALID(step, "Step")
+            Scraper.__dict__[step](driver)
+
+if __name__ == '__main__':
+    main()

@@ -21,14 +21,48 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.      #
 ###################################################################################
 
-class Config:
-    """
-    Config class. Stores attributes defined in JSON script.
-    Parent class of Scraper.
-    """
-    def __init__(self, **kwargs):
-        if kwargs:
-            # Iterate over keyword arguments
-            for attrb, val in kwargs.items():
-                # Store attributes
-                self.__dict__[attrb] = val
+
+# Comment out the following line if you use Git Bash
+# alias python3="winpty -Xallow-non-tty -Xplain python3"
+
+# File alias
+SCRIPT="script.json"
+CONFIG="_config.py"
+PROG="main.py"
+
+cd Script
+
+echo "Installing Python libraries..."
+python3 -m pip3 install -q -r requirements.txt
+
+cls || clear
+
+# Prompt for Facebook alias
+echo -n "Please enter your Facebook alias:"
+read ALIAS
+
+# Prompt for Login email
+echo -n "Please enter your Facebook login email:"
+read EMAIL
+
+# Prompt for Password
+echo -n "Please enter your Facebook password:"
+read -s Password
+ENCODED=$(python3 $PROG --encode $Password -r)
+
+# Ask if account login requires 2-step auth
+echo "Does your Facebook account require Two-step Authentication?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) python3 $CONFIG --alias $ALIAS --email $EMAIL\
+              --password $ENCODED;
+              python3 $PROG --input $SCRIPT;
+              exit;;
+        No ) python3 $CONFIG --alias $ALIAS --email $EMAIL\
+             --password $ENCODED --no-auth;
+             python3 $PROG --input $SCRIPT;
+             exit;;
+    esac
+done
+
+cd ..
