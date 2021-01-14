@@ -1,5 +1,8 @@
+# comment out the following line if you use Git Bash
+# alias python3="winpty -Xallow-non-tty -Xplain python3"
+
 echo "Installing Python libraries..."
-pip3 install -q -r requirements.txt
+python3 -m pip3 install -q -r requirements.txt
 
 cls || clear
 

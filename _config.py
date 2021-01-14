@@ -21,8 +21,7 @@ LOGIN_STEPS = {
 }
 
 
-if __name__ == "__main__":
-
+def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--alias", type=str, metavar="N",
@@ -51,3 +50,7 @@ if __name__ == "__main__":
 
     with open(args.jsonfile, 'w') as configFile:
         configJSON = json.dump(config, configFile, indent=4)
+
+
+if __name__ == "__main__":
+    main()

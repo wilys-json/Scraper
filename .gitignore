@@ -3,6 +3,7 @@ __pycache__
 
 #log file
 *.log
+debug.log
 
 #zip files
 *.zip
