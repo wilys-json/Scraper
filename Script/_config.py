@@ -44,6 +44,15 @@ LOGIN_STEPS = {
     ]
 }
 
+# Template
+TEMPLATE = {
+    "TargetUrl" : "https://www.facebook.com/$ALIAS/photos",
+    "usernameElement" : "$EMAIL",
+    "passwordElement" : "$ENCODED_PASSWORD",
+    "Wait" : 1,
+    "LongWait" : 2,
+    "downloadDirectory" : "../PhotosOfMe"
+}
 
 def main():
     """
@@ -61,26 +70,43 @@ def main():
                         help="Two-step authentication not required.")
     parser.add_argument("--jsonfile", type=str, default="script.json",
                         metavar="F", help="config JSON filename")
+    parser.add_argument("--revert", action="store_true", required=False,
+                        help="Revert to template config JSON.")
 
     args = parser.parse_args()
+
     # Load JSON file
-    config = json.load(open(args.jsonfile))
+    script = json.load(open(args.jsonfile))
+    config = script['config']
 
-    # Configure targetUrl & login detail
-    config['config']['TargetUrl'] = ("https://www.facebook.com/{}/photos"
-                                    .format(args.alias))
-    config['config']['usernameElement']['content'] = args.email
-    config['config']['passwordElement']['content'] = args.password
+    # Revert to template script
+    if args.revert:
+        config['TargetUrl'] = TEMPLATE['TargetUrl']
+        config['usernameElement']['content'] = TEMPLATE['usernameElement']
+        config['passwordElement']['content'] = TEMPLATE['passwordElement']
+        config['Wait'] = TEMPLATE['Wait']
+        config['LongWait'] = TEMPLATE['LongWait']
+        config['downloadDirectory'] = TEMPLATE['downloadDirectory']
 
-    # Configure login option: Auth / No Auth
-    if args.no_auth:
-        config['config']['loginSteps'] = LOGIN_STEPS['NoAuth']
+    # Config scraping script
     else:
-        config['config']['loginSteps'] = LOGIN_STEPS['Auth']
 
+        # Configure targetUrl & login detail
+        config['TargetUrl'] = ("https://www.facebook.com/{}/photos"
+                                        .format(args.alias))
+        config['usernameElement']['content'] = args.email
+        config['passwordElement']['content'] = args.password
+
+        # Configure login option: Auth / No Auth
+        if args.no_auth:
+            config['loginSteps'] = LOGIN_STEPS['NoAuth']
+        else:
+            config['loginSteps'] = LOGIN_STEPS['Auth']
+
+    script['config'] = config
     # Write changes
-    with open(args.jsonfile, 'w') as configFile:
-        configJSON = json.dump(config, configFile, indent=4)
+    with open(args.jsonfile, 'w') as scriptFile:
+        configJSON = json.dump(script, scriptFile, indent=4)
 
 
 if __name__ == "__main__":

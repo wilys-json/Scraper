@@ -1,17 +1,17 @@
 {
     "config": {
         "BaseUrl": "https://www.facebook.com",
-        "TargetUrl": "https://www.facebook.com/$YOUR_FACEBOOK_ALIAS/photos",
+        "TargetUrl": "https://www.facebook.com/$ALIAS/photos",
         "Wait": 1,
         "LongWait": 2,
-        "downloadDirectory": "PhotosOfMe",
+        "downloadDirectory": "../PhotosOfMe",
         "downloadCounts": 0,
         "downloadFileFormat": ".jpg",
         "downloadBuffer": "photoUrl",
         "usernameElement": {
             "type": "id",
             "keyword": "email",
-            "content": "$YOUR_EMAIL",
+            "content": "$EMAIL",
             "encoded": false,
             "action": "_fillContent"
         },

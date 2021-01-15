@@ -56,13 +56,17 @@ select yn in "Yes" "No"; do
     case $yn in
         Yes ) python3 $CONFIG --alias $ALIAS --email $EMAIL\
               --password $ENCODED;
-              python3 $PROG --input $SCRIPT;
-              exit;;
+              break;;
         No ) python3 $CONFIG --alias $ALIAS --email $EMAIL\
              --password $ENCODED --no-auth;
-             python3 $PROG --input $SCRIPT;
-             exit;;
+             break;;
+
     esac
 done
 
+python3 $PROG --input $SCRIPT;  # Main program
+python3 $CONFIG --revert;  # Revert config to template
+
 cd ..
+
+exit
