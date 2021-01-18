@@ -22,7 +22,7 @@
 ###################################################################################
 
 
-# Comment out the following line if you use Git Bash
+# Comment out the following line if you use Git Bash; change to `python` if error
 # alias python3="winpty -Xallow-non-tty -Xplain python3"
 
 # File alias
@@ -33,7 +33,7 @@ PROG="main.py"
 cd Script
 
 echo "Installing Python libraries..."
-python3 -m pip3 install -q -r requirements.txt
+python3 -m pip3 install -q -r ../requirements.txt  # remove `python3 -m` if error
 
 cls || clear
 

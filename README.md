@@ -70,6 +70,22 @@ To avoid this, you can modify the `Wait` and `LongWait` time in the `Script/scri
         ...
 ```
 
+***Command-line Errors***
+
+*Windows Git Bash*
+Make sure you have commented out [the line as stated](# Usage)
+
+If the command `python3` is not recognized, try change `python3` to `python`, i.e.
+```
+alias python3="winpty -Xallow-non-tty -Xplain python"
+```
+
+*pip3 Command*
+If the line `python3 -m pip3 install -q -r ../requirements.txt` is not run properly, change this to:
+```
+pip3 install -q -r ../requirements.txt
+```
+
 ## License
 
 Copyright(c) 2021 Wilson Lam, The [MIT](./LICENSE) License
