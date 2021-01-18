@@ -73,7 +73,7 @@ To avoid this, you can modify the `Wait` and `LongWait` time in the `Script/scri
 ***Command-line Errors***
 
 *Windows Git Bash*
-Make sure you have commented out [the line as stated](# Usage)
+Make sure you have commented out [the line as stated](#usage)
 
 If the command `python3` is not recognized, try change `python3` to `python`, i.e.
 ```
@@ -85,6 +85,19 @@ If the line `python3 -m pip3 install -q -r ../requirements.txt` is not run prope
 ```
 pip3 install -q -r ../requirements.txt
 ```
+
+## Customization
+
+The default path of the download folder is `../PhotosOfMe`, you can change this name by altering the following in `Script/script.json`:
+```
+{
+    "config": {
+        ...
+        "downloadDirectory": "$CHANGE THIS TO YOUR TARGET DIRECTORY",
+        ...
+
+```
+**Note: `script.json` is under the folder `Script`, make sure you navigate up the directory if you want to save outside the `Script` folder**
 
 ## License
 
