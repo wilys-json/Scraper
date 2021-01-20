@@ -128,7 +128,14 @@ class Scraper(Chrome, Config):
         sleep(self.Wait)
 
         # Find element
-        element = self.find_element(type, keyword)
+        attempts = 0
+        while attempts < self.Patience:
+            try:
+                element = self.find_element(type, keyword)
+                break
+            except:
+                sleep(self.LongWait)
+                attempts += 1
 
         # Get webpage attribute if defined; stores result in instance attrib.
         if attribute:

@@ -4,6 +4,7 @@
         "TargetUrl": "https://www.facebook.com/$ALIAS/photos",
         "Wait": 1,
         "LongWait": 2,
+        "Patience" : 3,
         "downloadDirectory": "../PhotosOfMe",
         "downloadCounts": 0,
         "downloadFileFormat": ".jpg",
@@ -80,8 +81,6 @@
             "usernameElement",
             "passwordElement",
             "loginSubmitButton",
-            "approvalCode",
-            "checkpointSubmitButton",
             "saveBrowser",
             "checkpointSubmitButton"
         ],

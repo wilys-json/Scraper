@@ -107,7 +107,7 @@ def main():
     # Write changes
     with open(args.jsonfile, 'w') as scriptFile:
         configJSON = json.dump(script, scriptFile, indent=4)
-
+        
 
 if __name__ == "__main__":
     main()
