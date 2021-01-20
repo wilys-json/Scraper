@@ -33,7 +33,7 @@ PROG="main.py"
 cd Script
 
 echo "Installing Python libraries..."
-python3 -m pip3 install -q -r ../requirements.txt  # remove `python3 -m` if error
+python3 -m pip install -q -r ../requirements.txt  # remove `python3 -m` if error
 
 cls || clear
 
